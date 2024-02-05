@@ -40,14 +40,14 @@ docker compose run protoc
 
 ## TODO
 
-[ ] General code clean-up
-[ ] Documentation/comments
-[ ] Configurable ports / settings
-[ ] More efficient frontend data structure design
-[ ] Fully functioning Docker stack
-[ ] Python package
-[ ] Jupyter/IPython notebook support
-[ ] API for adding hooks/visuals on backend
-[ ] Rethink visualization block design
-[ ] Colab demos
-[ ] Support non-text generating models
+- [ ] General code clean-up
+- [ ] Documentation/comments
+- [ ] Configurable ports / settings
+- [ ] More efficient frontend data structure design
+- [ ] Fully functioning Docker stack
+- [ ] Python package
+- [ ] Jupyter/IPython notebook support
+- [ ] API for adding hooks/visuals on backend
+- [ ] Rethink visualization block design
+- [ ] Colab demos
+- [ ] Support non-text generating models
