@@ -1,4 +1,4 @@
-**NOTE: very early exploratory stages / work-in-progress. Expect bugs, unstable/hard-coded behavior, a lack of tests, etc.**
+**NOTE: very early exploratory stages / work-in-progress. Expect bugs, unstable/hard-coded behavior, a lack of tests, unclean/uncommented code, etc.**
 
 # Interpogate
 
