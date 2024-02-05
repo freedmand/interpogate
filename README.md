@@ -4,6 +4,8 @@
 
 A visual tool to interpret and understand PyTorch machine learning models.
 
+https://github.com/freedmand/interpogate/assets/306095/849afa6a-66d4-4009-8a8a-107cfd6345fd
+
 - Displays a graph of model architecture with a WebGL-powered frontend
 - Shows model runs in real-time via gRPC streaming
 - Supports adding visualization blocks
