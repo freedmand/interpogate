@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "protoc-gen-grpc-web": "^1.4.2",
+    "protoc-gen-js": "^3.21.2"
+  },
+  "dependencies": {
+    "@protobuf-ts/plugin": "^2.9.3"
+  }
+}

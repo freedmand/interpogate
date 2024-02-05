@@ -1,0 +1,37 @@
+services:
+  python:
+    build: src/python
+    volumes:
+      - ./src/python/:/src/python/
+      - modelcache:/modelcache
+    ports:
+      - "50051:50051"
+    shm_size: "8gb"
+    environment:
+      - "MODEL=${MODEL}"
+    stdin_open: true
+    tty: true
+  frontend:
+    build: src/frontend
+    volumes:
+      - ./src/frontend/:/app/
+      - node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+  protoc:
+    profiles: ["protoc"]
+    build: src/protos
+    volumes:
+      - ./src/protos/protoc_cmd.sh:/src/workdir/protoc_cmd.sh
+      - ./src/python/proto:/src/python/proto
+      - ./src/frontend/src/lib/proto:/src/frontend/src/lib/proto
+  proxy:
+    image: envoyproxy/envoy:v1.29.0
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./src/proxy/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./src/proxy/logs:/logs
+volumes:
+  node_modules:
+  modelcache:

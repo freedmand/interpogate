@@ -1,0 +1,154 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+message TokenizeRequest { string text = 1; }
+
+message ErrorResponse { string message = 1; }
+
+message TokenizeResponse {
+  message SuccessResponse {
+    repeated string tokens = 1;
+    repeated string tokens_special = 2;
+    repeated int32 token_ids = 3;
+  }
+
+  oneof Response {
+    SuccessResponse success_response = 1;
+    ErrorResponse error_response = 2;
+  }
+}
+
+message VocabResponse {
+  message SuccessResponse { repeated string vocab = 1; }
+
+  oneof Response {
+    SuccessResponse success_response = 1;
+    ErrorResponse error_response = 2;
+  }
+}
+
+message ModelNodeParam {
+  string name = 1;
+  Shape shape = 2;
+  string dtype = 3;
+}
+
+message Visualization {
+  message Spread {
+    int32 dim = 1;
+    int32 spread = 2;
+  }
+
+  message AttentionVisualization {
+    string id = 1;
+    string modelNodeId = 2;
+    repeated Key key_path = 3;
+    int32 attention_x_dim = 4;
+    int32 attention_y_dim = 5;
+    optional Spread spread = 6;
+    repeated int32 average_dims = 7;
+  }
+
+  message BarGraphVisualization {
+    string id = 1;
+    string modelNodeId = 2;
+    repeated Key key_path = 3;
+    int32 plot_dimension = 4;
+    optional Spread spread = 5;
+    repeated int32 average_dims = 6;
+  }
+
+  oneof VizType {
+    AttentionVisualization attention_viz = 1;
+    BarGraphVisualization bar_graph_viz = 2;
+  }
+}
+
+message ModelNode {
+  string name = 1;
+  string classname = 2;
+  string id = 3;
+  optional int32 in_features = 4;
+  optional int32 out_features = 5;
+  repeated ModelNode children = 6;
+  repeated ModelNodeParam params = 7;
+}
+
+message Visualizations { repeated Visualization visualizations = 1; }
+
+message VisualizationMap { map<string, Visualizations> visualization_map = 1; }
+
+message ExtractModelGraphResponse {
+  message SuccessResponse { ModelNode model_node = 1; }
+
+  oneof Response {
+    SuccessResponse success_response = 1;
+    ErrorResponse error_response = 2;
+  }
+}
+
+message RunModelForwardRequest {
+  repeated int32 token_ids = 1;
+  VisualizationMap visualization_map = 2;
+}
+
+message Shape { repeated int32 shape = 1; }
+
+message ListShape { repeated ComplexShape list_shape = 1; }
+
+message MapShape { map<string, ComplexShape> map_shape = 1; }
+
+message ComplexShape {
+  oneof ShapeType {
+    ListShape list_shape = 1;
+    MapShape dict_shape = 2;
+    MapShape class_shape = 3;
+    Shape shape = 4;
+    string type = 5;
+  }
+}
+
+message Key {
+  oneof KeyType {
+    int32 list_key = 1;
+    string dict_key = 2;
+    string class_key = 3;
+  }
+}
+
+message VisualizationResponse {
+  string visualization_id = 1;
+  bytes output = 2;
+}
+
+message RunModelForwardResponse {
+  message PreHookResponse {
+    string id = 1;
+    ComplexShape input_shape = 2;
+  }
+
+  message PostHookResponse {
+    string id = 1;
+    ComplexShape input_shape = 2;
+    ComplexShape output_shape = 3;
+    repeated VisualizationResponse visualization_responses = 4;
+  }
+
+  message DoneResponse { bytes output = 1; }
+
+  oneof Response {
+    ErrorResponse error_response = 1;
+    PreHookResponse pre_hook_response = 2;
+    PostHookResponse post_hook_response = 3;
+    DoneResponse done_response = 4;
+  }
+}
+
+service Interpogate {
+  rpc GetTokens(TokenizeRequest) returns (TokenizeResponse) {}
+  rpc GetVocab(google.protobuf.Empty) returns (VocabResponse) {}
+  rpc ExtractModelGraph(google.protobuf.Empty)
+      returns (ExtractModelGraphResponse) {}
+  rpc RunModelForward(RunModelForwardRequest)
+      returns (stream RunModelForwardResponse);
+}

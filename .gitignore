@@ -1,0 +1,16 @@
+.*
+
+# Allow-list dot files
+!.gitignore
+!.dockerignore
+!.eslintignore
+!.eslintrc.cjs
+!.npmrc
+!prettierignore
+!.prettierrc
+
+logs
+*.logs.jsonl
+node_modules
+__pycache__
+*.pyc

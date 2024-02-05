@@ -1,0 +1,2 @@
+grpcio-tools==1.60.1
+protoletariat==3.2.19
