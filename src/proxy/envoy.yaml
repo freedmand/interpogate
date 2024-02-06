@@ -46,7 +46,7 @@ static_resources:
                   - name: envoy.access_loggers.file
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
-                      path: "./logs/envoy.logs.jsonl"
+                      path: "/logs/envoy.logs.jsonl"
                       typed_json_format:
                         "@timestamp": "%START_TIME%"
                         client.address: "%DOWNSTREAM_REMOTE_ADDRESS%"

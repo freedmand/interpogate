@@ -30,7 +30,7 @@ By default, this will launch with the [GPT2](https://huggingface.co/openai-commu
 MODEL=roneneldan/TinyStories-1Layer-21M docker compose up
 ```
 
-(Caution: forward passes may not currently work under Docker but should be fixed soon)
+(Note: forward passes are extremely slow on Docker; instructions tbd on running Python separately)
 
 ## Development
 

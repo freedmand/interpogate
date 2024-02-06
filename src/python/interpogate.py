@@ -41,9 +41,13 @@ LOG_PATH = 'logs'
 # Fix pickling proto
 sys.path.append(str(Path(__file__).parent / 'proto'))
 
-
 # No backward passes needed
 torch.set_grad_enabled(False)
+
+# Single-threaded in Docker
+IN_DOCKER = os.environ.get("IN_DOCKER", False) == "True"
+if IN_DOCKER:
+    torch.set_num_threads(1)
 
 class Unbuffered(object):
     def __init__(self, stream):

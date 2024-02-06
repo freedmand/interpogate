@@ -1,6 +1,7 @@
 FROM python:3.12.1
 
 ENV HF_HOME=/modelcache
+ENV IN_DOCKER=True
 
 COPY ./requirements.txt /src/python/requirements.txt
 
