@@ -1,5 +1,6 @@
 services:
   python:
+    profiles: ["python"]
     build: src/python
     volumes:
       - ./src/python/:/src/python/
