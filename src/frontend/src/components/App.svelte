@@ -1,14 +1,16 @@
 <script lang="ts">
 	import type { Deck } from '@deck.gl/core/typed';
 	import type { ModelLayer } from '../lib/layer';
-	import { runModelForward } from '../lib/api';
+	import { getTokens, runModelForward, standalone } from '../lib/api';
 	import Textarea from './Textarea.svelte';
 	import type { Key, TokenizeResponse_SuccessResponse } from '../lib/proto/interpogate';
 	import { type NdArray } from 'ndarray';
 
-	import { ChatbubbleEllipsesOutline, ColorWandOutline, ContractOutline } from 'svelte-ionicons';
+	import ChatbubbleEllipsesOutline from 'svelte-ionicons/ChatboxEllipsesOutline.svelte';
+	import ColorWandOutline from 'svelte-ionicons/ColorWandOutline.svelte';
+	import ContractOutline from 'svelte-ionicons/ContractOutline.svelte';
 	import ModelResponse from './ModelResponse.svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import {
 		addVizResponse,
 		clearVizResponses,
@@ -57,7 +59,16 @@
 
 	$: vizModelNodeMap = $vizModelMap;
 
-	async function forwardPass(tokenIds: number[]) {
+	onMount(async () => {
+		if (!standalone) {
+			// Get token ids
+			const tokenizeResponse = await getTokens(''); // text doesn't matter since preloaded
+			// Preload forward pass
+			forwardPass(tokenizeResponse);
+		}
+	});
+
+	export async function forwardPass(tokenResponse: TokenizeResponse_SuccessResponse) {
 		if (runningForwardPass) return;
 
 		runningForwardPass = true;
@@ -69,7 +80,7 @@
 			startForwardPass(tokenResponse);
 
 			const startTime = Date.now();
-			for await (const response of runModelForward(tokenIds, vizModelNodeMap)) {
+			for await (const response of runModelForward(tokenResponse.tokenIds, vizModelNodeMap)) {
 				switch (response.response.oneofKind) {
 					case 'preHookResponse':
 						modelLayer.layerStates[response.response.preHookResponse.id] = 'running';
@@ -129,25 +140,33 @@
 	$: forwardInfo = $forwardPassMeta;
 </script>
 
-<h3 class="h3 fixed font-mono left-4 top-3 pointer-events-none">
-	<span
-		class="bg-gradient-to-br from-pink-500 to-violet-500 bg-clip-text text-transparent box-decoration-clone pointer-events-none select-none"
-		>interpogate</span
-	>
-</h3>
+{#if standalone}
+	<h3 class="h3 absolute font-mono left-4 top-3 pointer-events-none">
+		<span
+			class="bg-gradient-to-br from-pink-500 to-violet-500 bg-clip-text text-transparent box-decoration-clone pointer-events-none select-none"
+			>interpogate</span
+		>
+	</h3>
+{/if}
 
-<div class="fixed pl-4 top-16 max-h-[calc(100vh-6rem)] z-10 pointer-events-none">
-	<div class="flex flex-col max-h-[calc(100vh-6rem)] pointer-events-none [&>*]:pointer-events-auto">
+<div
+	class="absolute pl-4 bottom-8 z-10 pointer-events-none"
+	class:top-16={standalone}
+	class:top-4={!standalone}
+>
+	<div class="flex flex-col max-h-full pointer-events-none [&>*]:pointer-events-auto">
 		<div>
-			<button
-				type="button"
-				class="mb-4 mr-2 btn-icon backdrop-blur-sm [&>*]:outline-none"
-				class:variant-ghost-tertiary={pane !== 'forward'}
-				class:variant-filled-tertiary={pane === 'forward'}
-				on:click={() => togglePane('forward')}
-			>
-				<ChatbubbleEllipsesOutline />
-			</button>
+			{#if standalone || tokenResponse.tokens.length > 0}
+				<button
+					type="button"
+					class="mb-4 mr-2 btn-icon backdrop-blur-sm [&>*]:outline-none"
+					class:variant-ghost-tertiary={pane !== 'forward'}
+					class:variant-filled-tertiary={pane === 'forward'}
+					on:click={() => togglePane('forward')}
+				>
+					<ChatbubbleEllipsesOutline />
+				</button>
+			{/if}
 			<button
 				type="button"
 				class="mb-4 mr-2 btn-icon backdrop-blur-sm [&>*]:outline-none"
@@ -174,11 +193,13 @@
 		</div>
 		{#if pane === 'forward'}
 			<div class="card p-4 w-96 variant-ghost-tertiary backdrop-blur-sm min-h-0 overflow-y-auto">
-				<button
-					disabled={runningForwardPass}
-					class="btn variant-filled mb-2"
-					on:click={() => forwardPass(tokenResponse.tokenIds)}>Forward pass</button
-				>
+				{#if standalone}
+					<button
+						disabled={runningForwardPass}
+						class="btn variant-filled mb-2"
+						on:click={() => forwardPass(tokenResponse)}>Forward pass</button
+					>
+				{/if}
 				<Textarea
 					disabled={runningForwardPass}
 					bind:value
@@ -186,7 +207,7 @@
 					bind:tokenResponse
 					bind:selectedTokenIndex
 					selectable={modelResponse != null}
-					on:runForward={() => forwardPass(tokenResponse.tokenIds)}
+					on:runForward={() => forwardPass(tokenResponse)}
 				/>
 				{#if modelResponse != null}
 					<ModelResponse {modelResponse} {vocab} {selectedTokenIndex} />
@@ -194,7 +215,7 @@
 			</div>
 		{:else if pane === 'select' && modelLayer.selectedModelNode != null}
 			<div
-				class="card p-4 w-96 variant-ghost-secondary backdrop-blur-sm {modelLayer.lockedSelection
+				class="card p-4 w-96 variant-ghost-secondary backdrop-blur-sm overflow-y-auto {modelLayer.lockedSelection
 					? ''
 					: '!pointer-events-none'}"
 			>
@@ -258,7 +279,11 @@
 										><Shape
 											shape={outputShape}
 											numTokens={forwardInfo.tokenizeResponse.tokenIds.length}
-											on:click={(e) => showModalVizSelector(e.detail)}
+											on:click={(e) => {
+												if (standalone) {
+													showModalVizSelector(e.detail);
+												}
+											}}
 										/></td
 									>
 								</tr>

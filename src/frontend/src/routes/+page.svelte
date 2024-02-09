@@ -10,7 +10,7 @@
 		type RectObject
 	} from '../lib/graph';
 	import { ModelLayer } from '../lib/layer';
-	import { extractModelGraph, getVocab } from '../lib/api';
+	import { extractModelGraph, getVocab, initializeApi } from '../lib/api';
 	import App from '../components/App.svelte';
 	import { calculateZoomFitViewState, getBounds } from '../lib/geo';
 	import { forwardPassMeta, modelNode, vizMap, vizModelMap, vizResponses } from '../lib/store';
@@ -27,7 +27,11 @@
 	let screenWidth: number;
 	let screenHeight: number;
 
+	let app: App;
+
 	onMount(async () => {
+		await initializeApi();
+
 		deckgl = new Deck({
 			parent: canvasElem,
 			width: '100%',
@@ -172,10 +176,13 @@
 	}
 </script>
 
-<svelte:window bind:innerWidth={screenWidth} bind:innerHeight={screenHeight} />
-
 {#if modelLayer != null && deckgl != null && vocab != null}
-	<App {modelLayer} {deckgl} {vocab} on:zoomFit={zoomFit} />
+	<App bind:this={app} {modelLayer} {deckgl} {vocab} on:zoomFit={zoomFit} />
 {/if}
 
 <div class="canvas" bind:this={canvasElem} />
+<div
+	bind:clientWidth={screenWidth}
+	bind:clientHeight={screenHeight}
+	class="bg-white w-full h-full absolute inset-0 -z-10 pointer-events-none"
+></div>

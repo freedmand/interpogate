@@ -441,23 +441,11 @@ export interface RunModelForwardResponse {
          */
         errorResponse: ErrorResponse;
     } | {
-        oneofKind: "preHookResponse";
+        oneofKind: "successResponse";
         /**
-         * @generated from protobuf field: RunModelForwardResponse.PreHookResponse pre_hook_response = 2;
+         * @generated from protobuf field: RunModelForwardResponse.SuccessResponse success_response = 2;
          */
-        preHookResponse: RunModelForwardResponse_PreHookResponse;
-    } | {
-        oneofKind: "postHookResponse";
-        /**
-         * @generated from protobuf field: RunModelForwardResponse.PostHookResponse post_hook_response = 3;
-         */
-        postHookResponse: RunModelForwardResponse_PostHookResponse;
-    } | {
-        oneofKind: "doneResponse";
-        /**
-         * @generated from protobuf field: RunModelForwardResponse.DoneResponse done_response = 4;
-         */
-        doneResponse: RunModelForwardResponse_DoneResponse;
+        successResponse: RunModelForwardResponse_SuccessResponse;
     } | {
         oneofKind: undefined;
     };
@@ -504,6 +492,65 @@ export interface RunModelForwardResponse_DoneResponse {
      * @generated from protobuf field: bytes output = 1;
      */
     output: Uint8Array;
+}
+/**
+ * @generated from protobuf message RunModelForwardResponse.SuccessResponse
+ */
+export interface RunModelForwardResponse_SuccessResponse {
+    /**
+     * @generated from protobuf oneof: Response
+     */
+    response: {
+        oneofKind: "preHookResponse";
+        /**
+         * @generated from protobuf field: RunModelForwardResponse.PreHookResponse pre_hook_response = 1;
+         */
+        preHookResponse: RunModelForwardResponse_PreHookResponse;
+    } | {
+        oneofKind: "postHookResponse";
+        /**
+         * @generated from protobuf field: RunModelForwardResponse.PostHookResponse post_hook_response = 2;
+         */
+        postHookResponse: RunModelForwardResponse_PostHookResponse;
+    } | {
+        oneofKind: "doneResponse";
+        /**
+         * @generated from protobuf field: RunModelForwardResponse.DoneResponse done_response = 3;
+         */
+        doneResponse: RunModelForwardResponse_DoneResponse;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message PreloadedResponse
+ */
+export interface PreloadedResponse {
+    /**
+     * @generated from protobuf field: ExtractModelGraphResponse.SuccessResponse model_graph = 1;
+     */
+    modelGraph?: ExtractModelGraphResponse_SuccessResponse;
+    /**
+     * @generated from protobuf field: VocabResponse.SuccessResponse vocab = 2;
+     */
+    vocab?: VocabResponse_SuccessResponse;
+    /**
+     * @generated from protobuf field: optional PreloadedResponse.PreloadedForwardPass forward_pass = 3;
+     */
+    forwardPass?: PreloadedResponse_PreloadedForwardPass;
+}
+/**
+ * @generated from protobuf message PreloadedResponse.PreloadedForwardPass
+ */
+export interface PreloadedResponse_PreloadedForwardPass {
+    /**
+     * @generated from protobuf field: TokenizeResponse.SuccessResponse tokens = 1;
+     */
+    tokens?: TokenizeResponse_SuccessResponse;
+    /**
+     * @generated from protobuf field: repeated RunModelForwardResponse.SuccessResponse forward_responses = 2;
+     */
+    forwardResponses: RunModelForwardResponse_SuccessResponse[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class TokenizeRequest$Type extends MessageType<TokenizeRequest> {
@@ -1974,9 +2021,7 @@ class RunModelForwardResponse$Type extends MessageType<RunModelForwardResponse> 
     constructor() {
         super("RunModelForwardResponse", [
             { no: 1, name: "error_response", kind: "message", oneof: "response", T: () => ErrorResponse },
-            { no: 2, name: "pre_hook_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_PreHookResponse },
-            { no: 3, name: "post_hook_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_PostHookResponse },
-            { no: 4, name: "done_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_DoneResponse }
+            { no: 2, name: "success_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_SuccessResponse }
         ]);
     }
     create(value?: PartialMessage<RunModelForwardResponse>): RunModelForwardResponse {
@@ -1997,22 +2042,10 @@ class RunModelForwardResponse$Type extends MessageType<RunModelForwardResponse> 
                         errorResponse: ErrorResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).errorResponse)
                     };
                     break;
-                case /* RunModelForwardResponse.PreHookResponse pre_hook_response */ 2:
+                case /* RunModelForwardResponse.SuccessResponse success_response */ 2:
                     message.response = {
-                        oneofKind: "preHookResponse",
-                        preHookResponse: RunModelForwardResponse_PreHookResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).preHookResponse)
-                    };
-                    break;
-                case /* RunModelForwardResponse.PostHookResponse post_hook_response */ 3:
-                    message.response = {
-                        oneofKind: "postHookResponse",
-                        postHookResponse: RunModelForwardResponse_PostHookResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).postHookResponse)
-                    };
-                    break;
-                case /* RunModelForwardResponse.DoneResponse done_response */ 4:
-                    message.response = {
-                        oneofKind: "doneResponse",
-                        doneResponse: RunModelForwardResponse_DoneResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).doneResponse)
+                        oneofKind: "successResponse",
+                        successResponse: RunModelForwardResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).successResponse)
                     };
                     break;
                 default:
@@ -2030,15 +2063,9 @@ class RunModelForwardResponse$Type extends MessageType<RunModelForwardResponse> 
         /* ErrorResponse error_response = 1; */
         if (message.response.oneofKind === "errorResponse")
             ErrorResponse.internalBinaryWrite(message.response.errorResponse, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* RunModelForwardResponse.PreHookResponse pre_hook_response = 2; */
-        if (message.response.oneofKind === "preHookResponse")
-            RunModelForwardResponse_PreHookResponse.internalBinaryWrite(message.response.preHookResponse, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* RunModelForwardResponse.PostHookResponse post_hook_response = 3; */
-        if (message.response.oneofKind === "postHookResponse")
-            RunModelForwardResponse_PostHookResponse.internalBinaryWrite(message.response.postHookResponse, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* RunModelForwardResponse.DoneResponse done_response = 4; */
-        if (message.response.oneofKind === "doneResponse")
-            RunModelForwardResponse_DoneResponse.internalBinaryWrite(message.response.doneResponse, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* RunModelForwardResponse.SuccessResponse success_response = 2; */
+        if (message.response.oneofKind === "successResponse")
+            RunModelForwardResponse_SuccessResponse.internalBinaryWrite(message.response.successResponse, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2219,6 +2246,190 @@ class RunModelForwardResponse_DoneResponse$Type extends MessageType<RunModelForw
  * @generated MessageType for protobuf message RunModelForwardResponse.DoneResponse
  */
 export const RunModelForwardResponse_DoneResponse = new RunModelForwardResponse_DoneResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RunModelForwardResponse_SuccessResponse$Type extends MessageType<RunModelForwardResponse_SuccessResponse> {
+    constructor() {
+        super("RunModelForwardResponse.SuccessResponse", [
+            { no: 1, name: "pre_hook_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_PreHookResponse },
+            { no: 2, name: "post_hook_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_PostHookResponse },
+            { no: 3, name: "done_response", kind: "message", oneof: "response", T: () => RunModelForwardResponse_DoneResponse }
+        ]);
+    }
+    create(value?: PartialMessage<RunModelForwardResponse_SuccessResponse>): RunModelForwardResponse_SuccessResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.response = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<RunModelForwardResponse_SuccessResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RunModelForwardResponse_SuccessResponse): RunModelForwardResponse_SuccessResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* RunModelForwardResponse.PreHookResponse pre_hook_response */ 1:
+                    message.response = {
+                        oneofKind: "preHookResponse",
+                        preHookResponse: RunModelForwardResponse_PreHookResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).preHookResponse)
+                    };
+                    break;
+                case /* RunModelForwardResponse.PostHookResponse post_hook_response */ 2:
+                    message.response = {
+                        oneofKind: "postHookResponse",
+                        postHookResponse: RunModelForwardResponse_PostHookResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).postHookResponse)
+                    };
+                    break;
+                case /* RunModelForwardResponse.DoneResponse done_response */ 3:
+                    message.response = {
+                        oneofKind: "doneResponse",
+                        doneResponse: RunModelForwardResponse_DoneResponse.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).doneResponse)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RunModelForwardResponse_SuccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* RunModelForwardResponse.PreHookResponse pre_hook_response = 1; */
+        if (message.response.oneofKind === "preHookResponse")
+            RunModelForwardResponse_PreHookResponse.internalBinaryWrite(message.response.preHookResponse, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* RunModelForwardResponse.PostHookResponse post_hook_response = 2; */
+        if (message.response.oneofKind === "postHookResponse")
+            RunModelForwardResponse_PostHookResponse.internalBinaryWrite(message.response.postHookResponse, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* RunModelForwardResponse.DoneResponse done_response = 3; */
+        if (message.response.oneofKind === "doneResponse")
+            RunModelForwardResponse_DoneResponse.internalBinaryWrite(message.response.doneResponse, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message RunModelForwardResponse.SuccessResponse
+ */
+export const RunModelForwardResponse_SuccessResponse = new RunModelForwardResponse_SuccessResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PreloadedResponse$Type extends MessageType<PreloadedResponse> {
+    constructor() {
+        super("PreloadedResponse", [
+            { no: 1, name: "model_graph", kind: "message", T: () => ExtractModelGraphResponse_SuccessResponse },
+            { no: 2, name: "vocab", kind: "message", T: () => VocabResponse_SuccessResponse },
+            { no: 3, name: "forward_pass", kind: "message", T: () => PreloadedResponse_PreloadedForwardPass }
+        ]);
+    }
+    create(value?: PartialMessage<PreloadedResponse>): PreloadedResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PreloadedResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PreloadedResponse): PreloadedResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* ExtractModelGraphResponse.SuccessResponse model_graph */ 1:
+                    message.modelGraph = ExtractModelGraphResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, message.modelGraph);
+                    break;
+                case /* VocabResponse.SuccessResponse vocab */ 2:
+                    message.vocab = VocabResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, message.vocab);
+                    break;
+                case /* optional PreloadedResponse.PreloadedForwardPass forward_pass */ 3:
+                    message.forwardPass = PreloadedResponse_PreloadedForwardPass.internalBinaryRead(reader, reader.uint32(), options, message.forwardPass);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PreloadedResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* ExtractModelGraphResponse.SuccessResponse model_graph = 1; */
+        if (message.modelGraph)
+            ExtractModelGraphResponse_SuccessResponse.internalBinaryWrite(message.modelGraph, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* VocabResponse.SuccessResponse vocab = 2; */
+        if (message.vocab)
+            VocabResponse_SuccessResponse.internalBinaryWrite(message.vocab, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional PreloadedResponse.PreloadedForwardPass forward_pass = 3; */
+        if (message.forwardPass)
+            PreloadedResponse_PreloadedForwardPass.internalBinaryWrite(message.forwardPass, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PreloadedResponse
+ */
+export const PreloadedResponse = new PreloadedResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PreloadedResponse_PreloadedForwardPass$Type extends MessageType<PreloadedResponse_PreloadedForwardPass> {
+    constructor() {
+        super("PreloadedResponse.PreloadedForwardPass", [
+            { no: 1, name: "tokens", kind: "message", T: () => TokenizeResponse_SuccessResponse },
+            { no: 2, name: "forward_responses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RunModelForwardResponse_SuccessResponse }
+        ]);
+    }
+    create(value?: PartialMessage<PreloadedResponse_PreloadedForwardPass>): PreloadedResponse_PreloadedForwardPass {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.forwardResponses = [];
+        if (value !== undefined)
+            reflectionMergePartial<PreloadedResponse_PreloadedForwardPass>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PreloadedResponse_PreloadedForwardPass): PreloadedResponse_PreloadedForwardPass {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* TokenizeResponse.SuccessResponse tokens */ 1:
+                    message.tokens = TokenizeResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, message.tokens);
+                    break;
+                case /* repeated RunModelForwardResponse.SuccessResponse forward_responses */ 2:
+                    message.forwardResponses.push(RunModelForwardResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PreloadedResponse_PreloadedForwardPass, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* TokenizeResponse.SuccessResponse tokens = 1; */
+        if (message.tokens)
+            TokenizeResponse_SuccessResponse.internalBinaryWrite(message.tokens, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated RunModelForwardResponse.SuccessResponse forward_responses = 2; */
+        for (let i = 0; i < message.forwardResponses.length; i++)
+            RunModelForwardResponse_SuccessResponse.internalBinaryWrite(message.forwardResponses[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PreloadedResponse.PreloadedForwardPass
+ */
+export const PreloadedResponse_PreloadedForwardPass = new PreloadedResponse_PreloadedForwardPass$Type();
 /**
  * @generated ServiceType for protobuf service Interpogate
  */

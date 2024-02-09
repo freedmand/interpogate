@@ -1,9 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-// import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 
 export default defineConfig({
-	plugins: [/**viteCommonjs(),*/ sveltekit()],
+	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
@@ -11,17 +10,13 @@ export default defineConfig({
 		preserveSymlinks: true
 	},
 	ssr: {
-		noExternal: ['interpogate_proto']
+		noExternal: ['npy']
 	},
-	optimizeDeps: {
-		exclude: ['interpogate_proto']
-	},
-	// optimizeDeps: {
-	// 	include: ['interpogate_proto']
-	// },
 	build: {
-		commonjsOptions: {
-			include: [/interpogate_proto/]
+		rollupOptions: {
+			output: {
+				manualChunks: () => 'main' // bundle everything in one chunk (important for singlefile build)
+			}
 		}
 	}
 });

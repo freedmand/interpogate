@@ -249,7 +249,7 @@ export class ModelLayer extends CompositeLayer {
 				],
 				getText: (d: TextObject) => d.text,
 				sizeUnits: 'meters',
-				fontFamily: 'Berkeley Mono Trial'
+				fontFamily: 'Berkeley Mono, Berkeley Mono Trial, monospace'
 			})
 		];
 	}

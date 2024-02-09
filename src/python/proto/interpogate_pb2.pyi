@@ -278,7 +278,7 @@ class VisualizationResponse(_message.Message):
         ...
 
 class RunModelForwardResponse(_message.Message):
-    __slots__ = ('error_response', 'pre_hook_response', 'post_hook_response', 'done_response')
+    __slots__ = ('error_response', 'success_response')
 
     class PreHookResponse(_message.Message):
         __slots__ = ('id', 'input_shape')
@@ -311,14 +311,44 @@ class RunModelForwardResponse(_message.Message):
 
         def __init__(self, output: _Optional[bytes]=...) -> None:
             ...
-    ERROR_RESPONSE_FIELD_NUMBER: _ClassVar[int]
-    PRE_HOOK_RESPONSE_FIELD_NUMBER: _ClassVar[int]
-    POST_HOOK_RESPONSE_FIELD_NUMBER: _ClassVar[int]
-    DONE_RESPONSE_FIELD_NUMBER: _ClassVar[int]
-    error_response: ErrorResponse
-    pre_hook_response: RunModelForwardResponse.PreHookResponse
-    post_hook_response: RunModelForwardResponse.PostHookResponse
-    done_response: RunModelForwardResponse.DoneResponse
 
-    def __init__(self, error_response: _Optional[_Union[ErrorResponse, _Mapping]]=..., pre_hook_response: _Optional[_Union[RunModelForwardResponse.PreHookResponse, _Mapping]]=..., post_hook_response: _Optional[_Union[RunModelForwardResponse.PostHookResponse, _Mapping]]=..., done_response: _Optional[_Union[RunModelForwardResponse.DoneResponse, _Mapping]]=...) -> None:
+    class SuccessResponse(_message.Message):
+        __slots__ = ('pre_hook_response', 'post_hook_response', 'done_response')
+        PRE_HOOK_RESPONSE_FIELD_NUMBER: _ClassVar[int]
+        POST_HOOK_RESPONSE_FIELD_NUMBER: _ClassVar[int]
+        DONE_RESPONSE_FIELD_NUMBER: _ClassVar[int]
+        pre_hook_response: RunModelForwardResponse.PreHookResponse
+        post_hook_response: RunModelForwardResponse.PostHookResponse
+        done_response: RunModelForwardResponse.DoneResponse
+
+        def __init__(self, pre_hook_response: _Optional[_Union[RunModelForwardResponse.PreHookResponse, _Mapping]]=..., post_hook_response: _Optional[_Union[RunModelForwardResponse.PostHookResponse, _Mapping]]=..., done_response: _Optional[_Union[RunModelForwardResponse.DoneResponse, _Mapping]]=...) -> None:
+            ...
+    ERROR_RESPONSE_FIELD_NUMBER: _ClassVar[int]
+    SUCCESS_RESPONSE_FIELD_NUMBER: _ClassVar[int]
+    error_response: ErrorResponse
+    success_response: RunModelForwardResponse.SuccessResponse
+
+    def __init__(self, error_response: _Optional[_Union[ErrorResponse, _Mapping]]=..., success_response: _Optional[_Union[RunModelForwardResponse.SuccessResponse, _Mapping]]=...) -> None:
+        ...
+
+class PreloadedResponse(_message.Message):
+    __slots__ = ('model_graph', 'vocab', 'forward_pass')
+
+    class PreloadedForwardPass(_message.Message):
+        __slots__ = ('tokens', 'forward_responses')
+        TOKENS_FIELD_NUMBER: _ClassVar[int]
+        FORWARD_RESPONSES_FIELD_NUMBER: _ClassVar[int]
+        tokens: TokenizeResponse.SuccessResponse
+        forward_responses: _containers.RepeatedCompositeFieldContainer[RunModelForwardResponse.SuccessResponse]
+
+        def __init__(self, tokens: _Optional[_Union[TokenizeResponse.SuccessResponse, _Mapping]]=..., forward_responses: _Optional[_Iterable[_Union[RunModelForwardResponse.SuccessResponse, _Mapping]]]=...) -> None:
+            ...
+    MODEL_GRAPH_FIELD_NUMBER: _ClassVar[int]
+    VOCAB_FIELD_NUMBER: _ClassVar[int]
+    FORWARD_PASS_FIELD_NUMBER: _ClassVar[int]
+    model_graph: ExtractModelGraphResponse.SuccessResponse
+    vocab: VocabResponse.SuccessResponse
+    forward_pass: PreloadedResponse.PreloadedForwardPass
+
+    def __init__(self, model_graph: _Optional[_Union[ExtractModelGraphResponse.SuccessResponse, _Mapping]]=..., vocab: _Optional[_Union[VocabResponse.SuccessResponse, _Mapping]]=..., forward_pass: _Optional[_Union[PreloadedResponse.PreloadedForwardPass, _Mapping]]=...) -> None:
         ...

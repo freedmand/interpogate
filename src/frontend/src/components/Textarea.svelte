@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { popup, Table, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { getTokens } from '../lib/api';
+	import { getTokens, standalone } from '../lib/api';
 	import type { TokenizeResponse_SuccessResponse } from '../lib/proto/interpogate';
 	import { onMount } from 'svelte';
 	import { normalizeToken } from '../lib/ai';
@@ -40,19 +40,28 @@
 	});
 </script>
 
-<textarea
-	class="resize-none w-full p-2"
-	bind:this={textarea}
-	on:input={changed}
-	bind:value
-	{disabled}
-	{placeholder}
-	on:keydown={(e) => {
-		if (e.code === 'Enter' && (e.ctrlKey || e.metaKey)) {
-			dispatch('runForward');
-		}
-	}}
-></textarea>
+{#if standalone}
+	<textarea
+		class="resize-none w-full p-2"
+		bind:this={textarea}
+		on:input={changed}
+		bind:value
+		{disabled}
+		{placeholder}
+		on:keydown={(e) => {
+			if (e.code === 'Enter' && (e.ctrlKey || e.metaKey)) {
+				dispatch('runForward');
+			}
+		}}
+	></textarea>
+{:else}
+	<textarea
+		class="resize-none w-full p-2"
+		bind:this={textarea}
+		value={tokenResponse.tokens.join('')}
+		disabled={true}
+	></textarea>
+{/if}
 <div>
 	{#each tokenResponse.tokens as token, i}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->

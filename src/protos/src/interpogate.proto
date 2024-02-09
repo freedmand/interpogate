@@ -136,12 +136,29 @@ message RunModelForwardResponse {
 
   message DoneResponse { bytes output = 1; }
 
+  message SuccessResponse {
+    oneof Response {
+      PreHookResponse pre_hook_response = 1;
+      PostHookResponse post_hook_response = 2;
+      DoneResponse done_response = 3;
+    }
+  }
+
   oneof Response {
     ErrorResponse error_response = 1;
-    PreHookResponse pre_hook_response = 2;
-    PostHookResponse post_hook_response = 3;
-    DoneResponse done_response = 4;
+    SuccessResponse success_response = 2;
   }
+}
+
+message PreloadedResponse {
+  message PreloadedForwardPass {
+    TokenizeResponse.SuccessResponse tokens = 1;
+    repeated RunModelForwardResponse.SuccessResponse forward_responses = 2;
+  }
+
+  ExtractModelGraphResponse.SuccessResponse model_graph = 1;
+  VocabResponse.SuccessResponse vocab = 2;
+  optional PreloadedForwardPass forward_pass = 3;
 }
 
 service Interpogate {

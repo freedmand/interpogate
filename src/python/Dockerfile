@@ -9,4 +9,4 @@ WORKDIR /src/python
 
 RUN python3 -m pip install -r requirements.txt --break-system-packages
 
-CMD python3 interpogate.py $MODEL
+CMD python3 server.py $MODEL

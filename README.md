@@ -42,7 +42,7 @@ docker compose up
 In another terminal tab, `cd src/python` and activate the Python virtual env set up above via `source ./venv/bin/activate`. Then, run the Python backend:
 
 ```sh
-python3 interpogate.py
+python3 server.py
 ```
 
 This will launch [GPT2](<[GPT2](https://huggingface.co/openai-community/gpt2)>), downloading the model on the first usage. Once the Python backend says `SERVING AT 50051`, it is loaded.
@@ -51,10 +51,10 @@ Finally, visit the frontend application at [localhost:5173](http://localhost:517
 
 ### Run with custom models
 
-To run with a custom [Huggingface model](https://huggingface.co/models), you can run `python3 interpogate.py <model_name>`, specifying the Huggingface model path, e.g.
+To run with a custom [Huggingface model](https://huggingface.co/models), you can run `python3 server.py <model_name>`, specifying the Huggingface model path, e.g.
 
 ```sh
-python3 interpogate.py roneneldan/TinyStories-1Layer-21M
+python3 server.py roneneldan/TinyStories-1Layer-21M
 ```
 
 ## Run everything with Docker
@@ -82,7 +82,13 @@ MODEL=roneneldan/TinyStories-1Layer-21M docker compose --profile python up
 To recompile protocol buffers, run
 
 ```sh
-docker compose run protoc
+docker compose run --rm protoc
+```
+
+To rebuild single-file web app, run
+
+```sh
+docker compose run --rm frontend-singlefile-build
 ```
 
 ## TODO
@@ -93,7 +99,7 @@ docker compose run protoc
 - [ ] More efficient frontend data structure design
 - [ ] Fully functioning Docker stack
 - [ ] Python package
-- [ ] Jupyter/IPython notebook support
+- [partial] Jupyter/IPython notebook support
 - [ ] API for adding hooks/visuals on backend
 - [ ] Rethink visualization block design
 - [ ] Colab demos

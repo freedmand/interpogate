@@ -2,6 +2,7 @@
 	import { TreeView, TreeViewItem } from '@skeletonlabs/skeleton';
 	import { Key, type ComplexShape } from '../lib/proto/interpogate';
 	import { createEventDispatcher } from 'svelte';
+	import { standalone } from '../lib/api';
 
 	const dispatch = createEventDispatcher();
 
@@ -95,7 +96,8 @@
 	{@const actualShape = shape.shapeType.shape.shape}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<span
-		class="font-mono px-2 cursor-pointer"
+		class="font-mono px-2"
+		class:cursor-pointer={standalone}
 		on:click={() => dispatch('click', { key, shape: actualShape })}
 	>
 		{#each actualShape as num, i}

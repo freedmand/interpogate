@@ -18,7 +18,9 @@
 	initializeStores();
 </script>
 
-<Modal components={modalRegistry} />
-<AppShell>
-	<slot />
-</AppShell>
+<div class="relative w-full h-full">
+	<Modal components={modalRegistry} />
+	<AppShell>
+		<slot />
+	</AppShell>
+</div>

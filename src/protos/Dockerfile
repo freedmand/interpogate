@@ -1,6 +1,6 @@
 FROM python:3.12.1
 
-COPY . /src/workdir/
+COPY requirements.txt package.json /src/workdir/
 WORKDIR /src/workdir
 
 RUN apt-get update && apt-get -y install npm && \

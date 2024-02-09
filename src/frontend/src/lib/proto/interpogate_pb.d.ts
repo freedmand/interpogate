@@ -705,20 +705,10 @@ export class RunModelForwardResponse extends jspb.Message {
   hasErrorResponse(): boolean;
   clearErrorResponse(): RunModelForwardResponse;
 
-  getPreHookResponse(): RunModelForwardResponse.PreHookResponse | undefined;
-  setPreHookResponse(value?: RunModelForwardResponse.PreHookResponse): RunModelForwardResponse;
-  hasPreHookResponse(): boolean;
-  clearPreHookResponse(): RunModelForwardResponse;
-
-  getPostHookResponse(): RunModelForwardResponse.PostHookResponse | undefined;
-  setPostHookResponse(value?: RunModelForwardResponse.PostHookResponse): RunModelForwardResponse;
-  hasPostHookResponse(): boolean;
-  clearPostHookResponse(): RunModelForwardResponse;
-
-  getDoneResponse(): RunModelForwardResponse.DoneResponse | undefined;
-  setDoneResponse(value?: RunModelForwardResponse.DoneResponse): RunModelForwardResponse;
-  hasDoneResponse(): boolean;
-  clearDoneResponse(): RunModelForwardResponse;
+  getSuccessResponse(): RunModelForwardResponse.SuccessResponse | undefined;
+  setSuccessResponse(value?: RunModelForwardResponse.SuccessResponse): RunModelForwardResponse;
+  hasSuccessResponse(): boolean;
+  clearSuccessResponse(): RunModelForwardResponse;
 
   getResponseCase(): RunModelForwardResponse.ResponseCase;
 
@@ -733,9 +723,7 @@ export class RunModelForwardResponse extends jspb.Message {
 export namespace RunModelForwardResponse {
   export type AsObject = {
     errorResponse?: ErrorResponse.AsObject,
-    preHookResponse?: RunModelForwardResponse.PreHookResponse.AsObject,
-    postHookResponse?: RunModelForwardResponse.PostHookResponse.AsObject,
-    doneResponse?: RunModelForwardResponse.DoneResponse.AsObject,
+    successResponse?: RunModelForwardResponse.SuccessResponse.AsObject,
   }
 
   export class PreHookResponse extends jspb.Message {
@@ -821,12 +809,116 @@ export namespace RunModelForwardResponse {
   }
 
 
+  export class SuccessResponse extends jspb.Message {
+    getPreHookResponse(): RunModelForwardResponse.PreHookResponse | undefined;
+    setPreHookResponse(value?: RunModelForwardResponse.PreHookResponse): SuccessResponse;
+    hasPreHookResponse(): boolean;
+    clearPreHookResponse(): SuccessResponse;
+
+    getPostHookResponse(): RunModelForwardResponse.PostHookResponse | undefined;
+    setPostHookResponse(value?: RunModelForwardResponse.PostHookResponse): SuccessResponse;
+    hasPostHookResponse(): boolean;
+    clearPostHookResponse(): SuccessResponse;
+
+    getDoneResponse(): RunModelForwardResponse.DoneResponse | undefined;
+    setDoneResponse(value?: RunModelForwardResponse.DoneResponse): SuccessResponse;
+    hasDoneResponse(): boolean;
+    clearDoneResponse(): SuccessResponse;
+
+    getResponseCase(): SuccessResponse.ResponseCase;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SuccessResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: SuccessResponse): SuccessResponse.AsObject;
+    static serializeBinaryToWriter(message: SuccessResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SuccessResponse;
+    static deserializeBinaryFromReader(message: SuccessResponse, reader: jspb.BinaryReader): SuccessResponse;
+  }
+
+  export namespace SuccessResponse {
+    export type AsObject = {
+      preHookResponse?: RunModelForwardResponse.PreHookResponse.AsObject,
+      postHookResponse?: RunModelForwardResponse.PostHookResponse.AsObject,
+      doneResponse?: RunModelForwardResponse.DoneResponse.AsObject,
+    }
+
+    export enum ResponseCase { 
+      RESPONSE_NOT_SET = 0,
+      PRE_HOOK_RESPONSE = 1,
+      POST_HOOK_RESPONSE = 2,
+      DONE_RESPONSE = 3,
+    }
+  }
+
+
   export enum ResponseCase { 
     RESPONSE_NOT_SET = 0,
     ERROR_RESPONSE = 1,
-    PRE_HOOK_RESPONSE = 2,
-    POST_HOOK_RESPONSE = 3,
-    DONE_RESPONSE = 4,
+    SUCCESS_RESPONSE = 2,
+  }
+}
+
+export class PreloadedResponse extends jspb.Message {
+  getModelGraph(): ExtractModelGraphResponse.SuccessResponse | undefined;
+  setModelGraph(value?: ExtractModelGraphResponse.SuccessResponse): PreloadedResponse;
+  hasModelGraph(): boolean;
+  clearModelGraph(): PreloadedResponse;
+
+  getVocab(): VocabResponse.SuccessResponse | undefined;
+  setVocab(value?: VocabResponse.SuccessResponse): PreloadedResponse;
+  hasVocab(): boolean;
+  clearVocab(): PreloadedResponse;
+
+  getForwardPass(): PreloadedResponse.PreloadedForwardPass | undefined;
+  setForwardPass(value?: PreloadedResponse.PreloadedForwardPass): PreloadedResponse;
+  hasForwardPass(): boolean;
+  clearForwardPass(): PreloadedResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PreloadedResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: PreloadedResponse): PreloadedResponse.AsObject;
+  static serializeBinaryToWriter(message: PreloadedResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PreloadedResponse;
+  static deserializeBinaryFromReader(message: PreloadedResponse, reader: jspb.BinaryReader): PreloadedResponse;
+}
+
+export namespace PreloadedResponse {
+  export type AsObject = {
+    modelGraph?: ExtractModelGraphResponse.SuccessResponse.AsObject,
+    vocab?: VocabResponse.SuccessResponse.AsObject,
+    forwardPass?: PreloadedResponse.PreloadedForwardPass.AsObject,
+  }
+
+  export class PreloadedForwardPass extends jspb.Message {
+    getTokens(): TokenizeResponse.SuccessResponse | undefined;
+    setTokens(value?: TokenizeResponse.SuccessResponse): PreloadedForwardPass;
+    hasTokens(): boolean;
+    clearTokens(): PreloadedForwardPass;
+
+    getForwardResponsesList(): Array<RunModelForwardResponse.SuccessResponse>;
+    setForwardResponsesList(value: Array<RunModelForwardResponse.SuccessResponse>): PreloadedForwardPass;
+    clearForwardResponsesList(): PreloadedForwardPass;
+    addForwardResponses(value?: RunModelForwardResponse.SuccessResponse, index?: number): RunModelForwardResponse.SuccessResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): PreloadedForwardPass.AsObject;
+    static toObject(includeInstance: boolean, msg: PreloadedForwardPass): PreloadedForwardPass.AsObject;
+    static serializeBinaryToWriter(message: PreloadedForwardPass, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): PreloadedForwardPass;
+    static deserializeBinaryFromReader(message: PreloadedForwardPass, reader: jspb.BinaryReader): PreloadedForwardPass;
+  }
+
+  export namespace PreloadedForwardPass {
+    export type AsObject = {
+      tokens?: TokenizeResponse.SuccessResponse.AsObject,
+      forwardResponsesList: Array<RunModelForwardResponse.SuccessResponse.AsObject>,
+    }
+  }
+
+
+  export enum ForwardPassCase { 
+    _FORWARD_PASS_NOT_SET = 0,
+    FORWARD_PASS = 3,
   }
 }
 
