@@ -6,11 +6,11 @@ build-backend = "setuptools.build_meta"
 py-modules = ["interpogate"]
 
 [tool.setuptools.packages.find]
-include = ["proto"]
+include = ["proto", "static"]
 
 [project]
 name = "interpogate"
-version = "0.0.0"
+version = "0.0.5"
 description = "A tool to interpret machine learning models"
 authors = [{name = "Dylan Freedman", email = "freedmand@gmail.com"}]
 readme = "README.md"
@@ -20,12 +20,17 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  "grpcio==1.60.1",
-  "torch==2.2.0",
-  "transformers==4.37.2",
-  "numpy==1.26.3",
-  "protobuf==4.25.2"
+  "torch>=2",
+  "transformers>=4",
+  "numpy>=1",
+  "protobuf>=3"
 ]
+
+[project.optional-dependencies]
+server = ["grpcio>=1"]
+
+[tool.setuptools.package-data]
+static = ["index.html"]
 
 [project.urls]
 "Homepage" = "https://github.com/freedmand/interpogate"

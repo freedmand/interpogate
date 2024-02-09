@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: 'Berkeley Mono';
+	src:
+		url('https://freedmand-assets.pages.dev/fonts/BerkeleyMono-Regular.woff2') format('woff2'),
+		url('https://freedmand-assets.pages.dev/fonts/BerkeleyMono-Regular.woff') format('woff');
+}
+
 body *::selection {
 	background-color: rgba(98, 90, 179, 0.3) !important;
 }

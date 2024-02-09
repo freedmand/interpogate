@@ -14,10 +14,10 @@ const config = {
 	],
 	theme: {
 		fontFamily: {
-			body: ['"Berkeley Mono Trial"', 'monospace'],
-			sans: ['"Berkeley Mono Trial"', 'monospace'],
-			serif: ['"Berkeley Mono Trial"', 'monospace'],
-			mono: ['"Berkeley Mono Trial"', 'monospace']
+			body: ['"Berkeley Mono"', 'monospace'],
+			sans: ['"Berkeley Mono"', 'monospace'],
+			serif: ['"Berkeley Mono"', 'monospace'],
+			mono: ['"Berkeley Mono"', 'monospace']
 		}
 	},
 	plugins: [
