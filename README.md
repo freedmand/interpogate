@@ -12,9 +12,14 @@ https://github.com/freedmand/interpogate/assets/306095/849afa6a-66d4-4009-8a8a-1
 
 See https://twitter.com/dylfreed/status/1754023172502847973 for more context / demo videos.
 
+### Demos
+
+- [Simple demo (colab notebook)](https://colab.research.google.com/drive/13RkYiPb-uDS5-Re4dBcSDHnEcjsluswA?usp=sharing)
+- [Logit lens demo (colab notebook)](https://colab.research.google.com/drive/1Qy9UpFtlrPlsuVPyDXmMjq3D8JcIdcUa?usp=sharing)
+
 ## Running in IPython/Jupyter notebooks
 
-Check out this [Colab notebook](https://colab.research.google.com/drive/13RkYiPb-uDS5-Re4dBcSDHnEcjsluswA?usp=sharing) for an interactive demo of using interpogate, or follow the steps below:
+Follow the steps below:
 
 ### Setup
 
