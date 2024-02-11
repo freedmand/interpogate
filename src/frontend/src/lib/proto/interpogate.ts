@@ -226,27 +226,31 @@ export interface ModelNode {
      */
     name: string;
     /**
-     * @generated from protobuf field: string classname = 2;
+     * @generated from protobuf field: string path = 2;
+     */
+    path: string;
+    /**
+     * @generated from protobuf field: string classname = 3;
      */
     classname: string;
     /**
-     * @generated from protobuf field: string id = 3;
+     * @generated from protobuf field: string id = 4;
      */
     id: string;
     /**
-     * @generated from protobuf field: optional int32 in_features = 4;
+     * @generated from protobuf field: optional int32 in_features = 5;
      */
     inFeatures?: number;
     /**
-     * @generated from protobuf field: optional int32 out_features = 5;
+     * @generated from protobuf field: optional int32 out_features = 6;
      */
     outFeatures?: number;
     /**
-     * @generated from protobuf field: repeated ModelNode children = 6;
+     * @generated from protobuf field: repeated ModelNode children = 7;
      */
     children: ModelNode[];
     /**
-     * @generated from protobuf field: repeated ModelNodeParam params = 7;
+     * @generated from protobuf field: repeated ModelNodeParam params = 8;
      */
     params: ModelNodeParam[];
 }
@@ -531,7 +535,7 @@ export interface PreloadedResponse {
      */
     modelGraph?: ExtractModelGraphResponse_SuccessResponse;
     /**
-     * @generated from protobuf field: VocabResponse.SuccessResponse vocab = 2;
+     * @generated from protobuf field: optional VocabResponse.SuccessResponse vocab = 2;
      */
     vocab?: VocabResponse_SuccessResponse;
     /**
@@ -544,7 +548,7 @@ export interface PreloadedResponse {
  */
 export interface PreloadedResponse_PreloadedForwardPass {
     /**
-     * @generated from protobuf field: TokenizeResponse.SuccessResponse tokens = 1;
+     * @generated from protobuf field: optional TokenizeResponse.SuccessResponse tokens = 1;
      */
     tokens?: TokenizeResponse_SuccessResponse;
     /**
@@ -1262,17 +1266,19 @@ class ModelNode$Type extends MessageType<ModelNode> {
     constructor() {
         super("ModelNode", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "classname", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "in_features", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "out_features", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ModelNode },
-            { no: 7, name: "params", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ModelNodeParam }
+            { no: 2, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "classname", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "in_features", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "out_features", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ModelNode },
+            { no: 8, name: "params", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ModelNodeParam }
         ]);
     }
     create(value?: PartialMessage<ModelNode>): ModelNode {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.name = "";
+        message.path = "";
         message.classname = "";
         message.id = "";
         message.children = [];
@@ -1289,22 +1295,25 @@ class ModelNode$Type extends MessageType<ModelNode> {
                 case /* string name */ 1:
                     message.name = reader.string();
                     break;
-                case /* string classname */ 2:
+                case /* string path */ 2:
+                    message.path = reader.string();
+                    break;
+                case /* string classname */ 3:
                     message.classname = reader.string();
                     break;
-                case /* string id */ 3:
+                case /* string id */ 4:
                     message.id = reader.string();
                     break;
-                case /* optional int32 in_features */ 4:
+                case /* optional int32 in_features */ 5:
                     message.inFeatures = reader.int32();
                     break;
-                case /* optional int32 out_features */ 5:
+                case /* optional int32 out_features */ 6:
                     message.outFeatures = reader.int32();
                     break;
-                case /* repeated ModelNode children */ 6:
+                case /* repeated ModelNode children */ 7:
                     message.children.push(ModelNode.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated ModelNodeParam params */ 7:
+                case /* repeated ModelNodeParam params */ 8:
                     message.params.push(ModelNodeParam.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1322,24 +1331,27 @@ class ModelNode$Type extends MessageType<ModelNode> {
         /* string name = 1; */
         if (message.name !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.name);
-        /* string classname = 2; */
+        /* string path = 2; */
+        if (message.path !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.path);
+        /* string classname = 3; */
         if (message.classname !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.classname);
-        /* string id = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.classname);
+        /* string id = 4; */
         if (message.id !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.id);
-        /* optional int32 in_features = 4; */
+            writer.tag(4, WireType.LengthDelimited).string(message.id);
+        /* optional int32 in_features = 5; */
         if (message.inFeatures !== undefined)
-            writer.tag(4, WireType.Varint).int32(message.inFeatures);
-        /* optional int32 out_features = 5; */
+            writer.tag(5, WireType.Varint).int32(message.inFeatures);
+        /* optional int32 out_features = 6; */
         if (message.outFeatures !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.outFeatures);
-        /* repeated ModelNode children = 6; */
+            writer.tag(6, WireType.Varint).int32(message.outFeatures);
+        /* repeated ModelNode children = 7; */
         for (let i = 0; i < message.children.length; i++)
-            ModelNode.internalBinaryWrite(message.children[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* repeated ModelNodeParam params = 7; */
+            ModelNode.internalBinaryWrite(message.children[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* repeated ModelNodeParam params = 8; */
         for (let i = 0; i < message.params.length; i++)
-            ModelNodeParam.internalBinaryWrite(message.params[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            ModelNodeParam.internalBinaryWrite(message.params[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2339,7 +2351,7 @@ class PreloadedResponse$Type extends MessageType<PreloadedResponse> {
                 case /* ExtractModelGraphResponse.SuccessResponse model_graph */ 1:
                     message.modelGraph = ExtractModelGraphResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, message.modelGraph);
                     break;
-                case /* VocabResponse.SuccessResponse vocab */ 2:
+                case /* optional VocabResponse.SuccessResponse vocab */ 2:
                     message.vocab = VocabResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, message.vocab);
                     break;
                 case /* optional PreloadedResponse.PreloadedForwardPass forward_pass */ 3:
@@ -2360,7 +2372,7 @@ class PreloadedResponse$Type extends MessageType<PreloadedResponse> {
         /* ExtractModelGraphResponse.SuccessResponse model_graph = 1; */
         if (message.modelGraph)
             ExtractModelGraphResponse_SuccessResponse.internalBinaryWrite(message.modelGraph, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* VocabResponse.SuccessResponse vocab = 2; */
+        /* optional VocabResponse.SuccessResponse vocab = 2; */
         if (message.vocab)
             VocabResponse_SuccessResponse.internalBinaryWrite(message.vocab, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional PreloadedResponse.PreloadedForwardPass forward_pass = 3; */
@@ -2396,7 +2408,7 @@ class PreloadedResponse_PreloadedForwardPass$Type extends MessageType<PreloadedR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* TokenizeResponse.SuccessResponse tokens */ 1:
+                case /* optional TokenizeResponse.SuccessResponse tokens */ 1:
                     message.tokens = TokenizeResponse_SuccessResponse.internalBinaryRead(reader, reader.uint32(), options, message.tokens);
                     break;
                 case /* repeated RunModelForwardResponse.SuccessResponse forward_responses */ 2:
@@ -2414,7 +2426,7 @@ class PreloadedResponse_PreloadedForwardPass$Type extends MessageType<PreloadedR
         return message;
     }
     internalBinaryWrite(message: PreloadedResponse_PreloadedForwardPass, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* TokenizeResponse.SuccessResponse tokens = 1; */
+        /* optional TokenizeResponse.SuccessResponse tokens = 1; */
         if (message.tokens)
             TokenizeResponse_SuccessResponse.internalBinaryWrite(message.tokens, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated RunModelForwardResponse.SuccessResponse forward_responses = 2; */

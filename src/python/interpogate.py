@@ -6,10 +6,12 @@ import os
 import sys
 import traceback
 import typing
+import warnings
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from io import BytesIO
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Any, Callable, Iterator, Optional
 
 import numpy as np
 import torch
@@ -122,6 +124,7 @@ class InterpogateService:
 
     hooks: list[RemovableHandle] = field(default_factory=list)
     model_id_map: dict[torch.nn.Module, str] = field(default_factory=dict)
+    path_model_map: dict[str, torch.nn.Module] = field(default_factory=dict)
     id_incrementer = 1
 
     def initialize_logging(self):
@@ -185,22 +188,28 @@ class InterpogateService:
                 error_response=ErrorResponse(message=get_error_message(e))
             )
 
-    def model_to_model_graph(self, model: torch.nn.Module, name='root') -> ModelNode:
+    def model_to_model_graph(self, model: torch.nn.Module, name='root', path=[]) -> ModelNode:
+        full_path = '.'.join(path)
+        if full_path == '':
+            # Root
+            full_path = '.'
         props = {}
         props['name'] = name
+        props['path'] = full_path
         props['classname'] = model.__class__.__name__
         if model in self.model_id_map:
             props['id'] = f'{self.model_id_map[model]}'
         else:
             props['id'] = f'{self.id_incrementer}'
             self.model_id_map[model] = self.id_incrementer
+            self.path_model_map[full_path] = model
             self.id_incrementer += 1
         if hasattr(model, 'in_features'):
             props['in_features'] = model.in_features
         if hasattr(model, 'out_features'):
             props['out_features'] = model.out_features
         props['params'] = [ModelNodeParam(name=name, shape=Shape(shape=list(parameter.shape)), dtype=str(parameter.dtype)) for name, parameter in model.named_parameters(recurse=False)]
-        props['children'] = [self.model_to_model_graph(child, name) for name, child in model.named_children()]
+        props['children'] = [self.model_to_model_graph(child, name, [*path, name]) for name, child in model.named_children()]
 
         return ModelNode(**props)
     
@@ -211,7 +220,7 @@ class InterpogateService:
                 result += self.get_all_modules(child, None if depth is None else depth - 1)
         return result
     
-    def run_model_forward(self, callback, request: RunModelForwardRequest) -> None:
+    def run_model_forward(self, callback, request: RunModelForwardRequest, override_model_input: Any = None) -> None:
         try:
             # Clear any hooks lingering around (shouldn't be any)
             self.remove_hooks()
@@ -242,7 +251,12 @@ class InterpogateService:
                 self.hooks.append(module.register_forward_pre_hook(pre_hook))
                 self.hooks.append(module.register_forward_hook(post_hook))
             
-            output = self.model(input_ids=torch.tensor([request.token_ids]), output_attentions=True).logits.numpy(force=True)
+            if override_model_input:
+                input = override_model_input
+            else:
+                input = {"input_ids": torch.tensor([request.token_ids])}
+
+            output = self.model(**input, output_attentions=True).logits.numpy(force=True)
             output_bytes = get_np_bytes(output)
 
             callback(RunModelForwardResponse(success_response=RunModelForwardResponse.SuccessResponse(done_response=RunModelForwardResponse.DoneResponse(output=output_bytes))))
@@ -264,11 +278,11 @@ class InterpogateService:
 @dataclass
 class Interpogate:
     model: torch.nn.Module
-    tokenizer: transformers.PreTrainedTokenizerBase
+    tokenizer: Optional[transformers.PreTrainedTokenizerBase] = None
     service: InterpogateService = field(init=False)
     model_graph: ExtractModelGraphResponse.SuccessResponse = field(init=False)
-    vocab: VocabResponse.SuccessResponse = field(init=False)
-    forward_pass: Optional[tuple[TokenizeResponse.SuccessResponse, list[RunModelForwardResponse.SuccessResponse]]] = None
+    vocab: Optional[VocabResponse.SuccessResponse] = None
+    forward_pass: Optional[tuple[Optional[TokenizeResponse.SuccessResponse], list[RunModelForwardResponse.SuccessResponse]]] = None
 
     def assert_response(self, response):
         if response.HasField("error_response"):
@@ -278,9 +292,13 @@ class Interpogate:
     def __post_init__(self):
         self.service = InterpogateService(self.model, self.tokenizer)
         self.model_graph = self.assert_response(self.service.extract_model_graph())
-        self.vocab = self.assert_response(self.service.get_vocab())
+        if self.tokenizer:
+            self.vocab = self.assert_response(self.service.get_vocab())
     
-    def forward(self, text: str):
+    def forward_text(self, text: str):
+        if not self.tokenizer:
+            raise Exception("No tokenizer passed to Interpogate constructor")
+
         tokenize_response: TokenizeResponse.SuccessResponse = self.assert_response(self.service.get_tokens(text))
 
         forward_pass: list[RunModelForwardResponse.SuccessResponse] = []
@@ -289,6 +307,14 @@ class Interpogate:
 
         self.service.run_model_forward(callback, RunModelForwardRequest(token_ids = tokenize_response.token_ids))
         self.forward_pass = (tokenize_response, forward_pass)
+    
+    def forward(self, **input: Any):
+        forward_pass: list[RunModelForwardResponse.SuccessResponse] = []
+        def callback(resp):
+            forward_pass.append(self.assert_response(resp))
+
+        self.service.run_model_forward(callback, RunModelForwardRequest(), input)
+        self.forward_pass = (None, forward_pass)
     
     def get_preloaded_response(self) -> PreloadedResponse:
         if self.forward_pass is None:
@@ -304,10 +330,51 @@ class Interpogate:
             client_html = f.read()
         return client_html.replace('__PRELOADED_PLACEHOLDER__', self.get_preloaded_response_b64_str())
     
-    def get_iframe(self, width="100%", height=400):
+    def get_iframe(self, width="100%", height=450):
         width = html.escape(f"{width}")
         height = html.escape(f"{height}")
         srcdoc = html.escape(self.get_preloaded_html())
 
         iframe_html = f'<iframe width="{width}" height="{height}" srcdoc="{srcdoc}" frameborder="0"></iframe>'
         return iframe_html
+    
+    def visualize(self, width="100%", height=450):
+        iframe = self.get_iframe(width=width, height=height)
+
+        from IPython.display import HTML
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            return HTML(iframe)
+
+    def node(self, path: str) -> torch.nn.Module:
+        if path not in self.service.path_model_map:
+            raise ValueError(f"Path ({path}) not found in model")
+
+        return self.service.path_model_map[path]
+
+    @contextmanager
+    def hook(self):
+        class InterpogateHook:
+            def __init__(self, interp: Interpogate):
+                self.interp = interp
+                self.hooks: list[RemovableHandle] = []
+            
+            def pre(self, path: str, pre_hook: Callable[..., None]):
+                model = self.interp.node(path)
+                self.hooks.append(model.register_forward_pre_hook(pre_hook))
+            
+            def post(self, path: str, post_hook: Callable[..., None]):
+                model = self.interp.node(path)
+                self.hooks.append(model.register_forward_hook(post_hook))
+
+            def clear(self):
+                for hook in self.hooks:
+                    hook.remove()
+                self.hooks = []
+
+        interpogate_hook = InterpogateHook(self)
+        try:
+            yield interpogate_hook
+        finally:
+            interpogate_hook.clear()

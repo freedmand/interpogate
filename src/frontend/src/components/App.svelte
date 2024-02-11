@@ -61,10 +61,14 @@
 
 	onMount(async () => {
 		if (!standalone) {
-			// Get token ids
-			const tokenizeResponse = await getTokens(''); // text doesn't matter since preloaded
+			// Get token ids (text doesn't matter since preloaded)
+			tokenResponse = (await getTokens('')) ?? {
+				tokenIds: [],
+				tokens: [],
+				tokensSpecial: []
+			};
 			// Preload forward pass
-			forwardPass(tokenizeResponse);
+			forwardPass(tokenResponse);
 		}
 	});
 
@@ -119,17 +123,27 @@
 		}
 	}
 
-	const modal: ModalSettings = {
+	const vizModal: ModalSettings = {
 		type: 'component',
 		component: 'vizSelectorModal'
 	};
+	const hookModal: ModalSettings = {
+		type: 'component',
+		component: 'hookModal'
+	};
+
 	const modalStore = getModalStore();
 	function showModalVizSelector(detail: { key: Key[]; shape: number[] }) {
 		selectedNumTokens.set(forwardInfo?.tokenizeResponse.tokenIds.length ?? null);
 		selectedNode.set(modelLayer.selectedModelNode);
 		selectedKey.set(detail.key);
 		selectedShape.set(detail.shape);
-		modalStore.trigger(modal);
+		modalStore.trigger(vizModal);
+	}
+
+	function showModalHook() {
+		selectedNode.set(modelLayer.selectedModelNode);
+		modalStore.trigger(hookModal);
 	}
 
 	$: {
@@ -226,6 +240,15 @@
 							<td>{modelLayer.selectedModelNode.name}</td>
 						</tr>
 						<tr>
+							<th class="font-bold text-left px-4">Path</th>
+							<td
+								class="font-mono cursor-pointer"
+								on:click={(e) => {
+									showModalHook();
+								}}>{modelLayer.selectedModelNode.path}</td
+							>
+						</tr>
+						<tr>
 							<th class="font-bold text-left px-4">Class name</th>
 							<td>{modelLayer.selectedModelNode.classname}</td>
 						</tr>
@@ -270,9 +293,11 @@
 									<th class="font-bold text-left px-4"
 										>Output
 										{#if modelLayer.lockedSelection}
-											<span class="text-xs font-normal opacity-50 italic leading-3 inline-block"
-												>click on a shape to add a viz</span
-											>
+											{#if standalone}
+												<span class="text-xs font-normal opacity-50 italic leading-3 inline-block"
+													>click on a shape to add a viz</span
+												>
+											{/if}
 										{/if}
 									</th>
 									<td class="w-full"

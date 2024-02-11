@@ -51,6 +51,7 @@
 		"unist-util-remove": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
 		"vite": "^5.0.3",
+		"vite-plugin-tailwind-purgecss": "^0.2.0",
 		"vitest": "^1.2.0"
 	},
 	"type": "module",
@@ -63,6 +64,7 @@
 		"elkjs": "^0.9.1",
 		"google-protobuf": "^3.21.2",
 		"grpc-web": "^1.5.0",
+		"highlight.js": "^11.9.0",
 		"interpogate_proto": "file:src/lib/proto",
 		"ndarray": "^1.0.19",
 		"npyjs": "^0.6.0",

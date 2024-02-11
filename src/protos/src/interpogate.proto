@@ -66,12 +66,13 @@ message Visualization {
 
 message ModelNode {
   string name = 1;
-  string classname = 2;
-  string id = 3;
-  optional int32 in_features = 4;
-  optional int32 out_features = 5;
-  repeated ModelNode children = 6;
-  repeated ModelNodeParam params = 7;
+  string path = 2;
+  string classname = 3;
+  string id = 4;
+  optional int32 in_features = 5;
+  optional int32 out_features = 6;
+  repeated ModelNode children = 7;
+  repeated ModelNodeParam params = 8;
 }
 
 message Visualizations { repeated Visualization visualizations = 1; }
@@ -152,12 +153,12 @@ message RunModelForwardResponse {
 
 message PreloadedResponse {
   message PreloadedForwardPass {
-    TokenizeResponse.SuccessResponse tokens = 1;
+    optional TokenizeResponse.SuccessResponse tokens = 1;
     repeated RunModelForwardResponse.SuccessResponse forward_responses = 2;
   }
 
   ExtractModelGraphResponse.SuccessResponse model_graph = 1;
-  VocabResponse.SuccessResponse vocab = 2;
+  optional VocabResponse.SuccessResponse vocab = 2;
   optional PreloadedForwardPass forward_pass = 3;
 }
 

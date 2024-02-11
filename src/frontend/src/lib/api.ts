@@ -45,12 +45,12 @@ export async function initializeApi() {
 
 const INCOMPLETE_RESPONSE = 'Incomplete response';
 
-export async function getTokens(text: string): Promise<TokenizeResponse_SuccessResponse> {
+export async function getTokens(text: string): Promise<TokenizeResponse_SuccessResponse | null> {
 	if (preloadedResponse != null) {
 		if (preloadedResponse.forwardPass == null) {
 			throw new Error('Expected forward pass to be populated for api.getTokens');
 		}
-		return preloadedResponse.forwardPass.tokens!;
+		return preloadedResponse.forwardPass.tokens ?? null;
 	}
 
 	const tokenResponse = await interpogateService!.getTokens(
@@ -70,7 +70,8 @@ export async function getTokens(text: string): Promise<TokenizeResponse_SuccessR
 
 export async function getVocab(): Promise<string[]> {
 	if (preloadedResponse != null) {
-		return preloadedResponse.vocab!.vocab;
+		if (preloadedResponse.vocab == null) return [];
+		return preloadedResponse.vocab.vocab;
 	}
 
 	const getVocabResponse = await interpogateService!.getVocab(Empty.create());

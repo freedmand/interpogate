@@ -158,7 +158,6 @@ export class ModelLayer extends CompositeLayer {
 				id: `${this.id}_box`,
 				data: boxObjects,
 				pickable: true,
-				// onHover: (info) => console.log(info),
 				getWidth: 1,
 				lineWidthMinPixels: 1,
 				getPolygon: (d: BoxObject) => [

@@ -132,8 +132,9 @@ class Visualization(_message.Message):
         ...
 
 class ModelNode(_message.Message):
-    __slots__ = ('name', 'classname', 'id', 'in_features', 'out_features', 'children', 'params')
+    __slots__ = ('name', 'path', 'classname', 'id', 'in_features', 'out_features', 'children', 'params')
     NAME_FIELD_NUMBER: _ClassVar[int]
+    PATH_FIELD_NUMBER: _ClassVar[int]
     CLASSNAME_FIELD_NUMBER: _ClassVar[int]
     ID_FIELD_NUMBER: _ClassVar[int]
     IN_FEATURES_FIELD_NUMBER: _ClassVar[int]
@@ -141,6 +142,7 @@ class ModelNode(_message.Message):
     CHILDREN_FIELD_NUMBER: _ClassVar[int]
     PARAMS_FIELD_NUMBER: _ClassVar[int]
     name: str
+    path: str
     classname: str
     id: str
     in_features: int
@@ -148,7 +150,7 @@ class ModelNode(_message.Message):
     children: _containers.RepeatedCompositeFieldContainer[ModelNode]
     params: _containers.RepeatedCompositeFieldContainer[ModelNodeParam]
 
-    def __init__(self, name: _Optional[str]=..., classname: _Optional[str]=..., id: _Optional[str]=..., in_features: _Optional[int]=..., out_features: _Optional[int]=..., children: _Optional[_Iterable[_Union[ModelNode, _Mapping]]]=..., params: _Optional[_Iterable[_Union[ModelNodeParam, _Mapping]]]=...) -> None:
+    def __init__(self, name: _Optional[str]=..., path: _Optional[str]=..., classname: _Optional[str]=..., id: _Optional[str]=..., in_features: _Optional[int]=..., out_features: _Optional[int]=..., children: _Optional[_Iterable[_Union[ModelNode, _Mapping]]]=..., params: _Optional[_Iterable[_Union[ModelNodeParam, _Mapping]]]=...) -> None:
         ...
 
 class Visualizations(_message.Message):

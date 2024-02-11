@@ -1,0 +1,5 @@
+-e ../src/python
+jupyterlab
+ipywidgets
+pillow
+timm

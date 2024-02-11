@@ -354,6 +354,9 @@ export class ModelNode extends jspb.Message {
   getName(): string;
   setName(value: string): ModelNode;
 
+  getPath(): string;
+  setPath(value: string): ModelNode;
+
   getClassname(): string;
   setClassname(value: string): ModelNode;
 
@@ -391,6 +394,7 @@ export class ModelNode extends jspb.Message {
 export namespace ModelNode {
   export type AsObject = {
     name: string,
+    path: string,
     classname: string,
     id: string,
     inFeatures?: number,
@@ -401,12 +405,12 @@ export namespace ModelNode {
 
   export enum InFeaturesCase { 
     _IN_FEATURES_NOT_SET = 0,
-    IN_FEATURES = 4,
+    IN_FEATURES = 5,
   }
 
   export enum OutFeaturesCase { 
     _OUT_FEATURES_NOT_SET = 0,
-    OUT_FEATURES = 5,
+    OUT_FEATURES = 6,
   }
 }
 
@@ -913,8 +917,18 @@ export namespace PreloadedResponse {
       tokens?: TokenizeResponse.SuccessResponse.AsObject,
       forwardResponsesList: Array<RunModelForwardResponse.SuccessResponse.AsObject>,
     }
+
+    export enum TokensCase { 
+      _TOKENS_NOT_SET = 0,
+      TOKENS = 1,
+    }
   }
 
+
+  export enum VocabCase { 
+    _VOCAB_NOT_SET = 0,
+    VOCAB = 2,
+  }
 
   export enum ForwardPassCase { 
     _FORWARD_PASS_NOT_SET = 0,

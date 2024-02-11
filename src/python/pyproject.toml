@@ -10,7 +10,7 @@ include = ["proto", "static"]
 
 [project]
 name = "interpogate"
-version = "0.0.5"
+version = "0.0.6"
 description = "A tool to interpret machine learning models"
 authors = [{name = "Dylan Freedman", email = "freedmand@gmail.com"}]
 readme = "README.md"

@@ -1,5 +1,3 @@
-**NOTE: very early exploratory stages / work-in-progress. Expect bugs, unstable/hard-coded behavior, a lack of tests, unclean/uncommented code, etc.**
-
 # Interpogate
 
 A visual tool to interpret and understand PyTorch machine learning models.
@@ -8,7 +6,8 @@ https://github.com/freedmand/interpogate/assets/306095/849afa6a-66d4-4009-8a8a-1
 
 - Displays a graph of model architecture with a WebGL-powered frontend
 - Visualization can run in IPython/Jupyter notebooks
-- Tool can be run standalone to visualize model runs in real-time via gRPC streaming
+- Intuitive mechanism to attach hooks to models
+- Tool can be run standalone to visualize model runs in real-time via gRPC streaming (beta)
   - Supports adding visualization blocks
 
 See https://twitter.com/dylfreed/status/1754023172502847973 for more context / demo videos.
@@ -40,7 +39,7 @@ tokenizer = pipe.tokenizer
 
 ### Running interpogate
 
-The following commands will display an iframe containing the interpogate visualization after running a forward pass on the specified text:
+The following commands will display an interactive iframe in a Jupyter/colab notebook containing the interpogate visualization after running a forward pass on the specified text:
 
 ```py
 # Import interpogate
@@ -48,95 +47,79 @@ from interpogate import Interpogate
 
 # Create an instance of interpogate and run a forward pass
 interp = Interpogate(model, tokenizer)
-interp.forward("Hello there, how are you?")
+interp_text.forward_text("Hello there, how are you?")
 
 # Visualize the forward pass
 from IPython.display import HTML
 HTML(interp.get_iframe())
 ```
 
+You can run interpogate on non-textbased models as well:
+
+```py
+interp = Interpogate(model)
+interp_text.forward(**inputs)
+```
+
+Interpogate creates paths for each node that can be explored via the interactive visualization. It also provides a convenient API for registering disposable hooks and modifying model behavior:
+
+```py
+lm_head = interp.node('lm_head')
+with interp.hook() as hook:
+    def post_hook(model, input, output):
+        # output shape: [<1×N×2048>,...]
+        # Run the lm head to unembed and get logits
+        logits = lm_head(output[0])[0]
+        layer_logits.append(logits)
+        pass
+
+    # Register hooks as needed
+    for n in range(22):
+        hook.post(f"model.layers.{n}", post_hook)
+
+    # Run forward pass
+    interp.forward_text("The most fascinating thing is the")
+```
+
+More examples can be viewed in the `examples/` [directory](./example/README.md).
+
+## API
+
+### - `Interpogate(model, [tokenizer])`
+
+Create a new instance of interpogate attached to a PyTorch model and an optional tokenizer (if using text-based forward methods)
+
+- `interp.forward(**inputs)`
+
+  Runs a forward pass of the model with the specified `inputs` (same inputs that would be passed to the torch model directly). Records information about the shapes of each model node's input/output.
+
+- `interp.forward_text(text)`
+
+  Requires the interpogate instance to have been initialized with a tokenizer. Runs a forward pass on the specified string of text, using the tokenizer to derive model inputs. Records information about the shapes of each model node's input/output.
+
+- `interp.visualize()`
+
+  Render an iframe containing an interactive visualization of the model architecture. You can use the magic wand tool to display information about model nodes.
+
+- `interp.node(path)`
+
+  Return the model node at the specified path string. To get a model node path, use the `visualize` command and select a node. You can view its path in the displayed table, or click the path to get hook callback code.
+
+- `with interp.hook() as hook: ...`
+
+  Returns an instance of a class that can be used to attach pre- and post-forward pass hooks to the model within a context block.
+
+  - `hook.pre(path, callback_fn)`
+
+    Register a pre-forward pass hook on the specified model node by path that will trigger the callback function (callback function form: `def pre_hook(model, input):`)
+
+  - `hook.post(path, callback_fn)`
+
+    Register a post-forward pass hook on the specified model node by path that will trigger the callback function (callback function form: `def post_hook(model, input, output):`)
+
 ## Running standalone version of interpogate
 
-Interpogate can also be run as a standalone application. This mode is useful for visualizing model passes in realtime and adding visualization blocks (experimental; only attention viz works for now).
-
-### Installation
-
-Ensure you have [Docker](https://docs.docker.com/engine/install/) installed.
-
-It is recommended to run the Python backend manually and run Docker for everything else (the frontend and gRPC proxy). But if you like, there are instructions further down on how to run everything in Docker (it's just slower).
-
-To set up Python:
-
-```sh
-cd src/python
-
-# Create a virtual environment
-python3 -m venv venv
-source ./venv/bin/activate
-
-# Install the Python requirements
-python3 -m pip install -r requirements.txt
-```
-
-### Run
-
-In one terminal tab, spin up the frontend and gRPC proxy server:
-
-```sh
-docker compose up
-```
-
-In another terminal tab, `cd src/python` and activate the Python virtual env set up above via `source ./venv/bin/activate`. Then, run the Python backend:
-
-```sh
-python3 server.py
-```
-
-This will launch [GPT2](<[GPT2](https://huggingface.co/openai-community/gpt2)>), downloading the model on the first usage. Once the Python backend says `SERVING AT 50051`, it is loaded.
-
-Finally, visit the frontend application at [localhost:5173](http://localhost:5173/). You should see a model graph and be able to run forward passes.
-
-#### Run with custom models
-
-To run with a custom [Huggingface model](https://huggingface.co/models), you can run `python3 server.py <model_name>`, specifying the Huggingface model path, e.g.
-
-```sh
-python3 server.py roneneldan/TinyStories-1Layer-21M
-```
-
-### Run everything with Docker
-
-Instead of setting up Python dependencies, you can run the entire pipeline including the Python backend with Docker using a profile:
-
-```sh
-docker compose --profile python up
-```
-
-The frontend application will launch at [localhost:5173](http://localhost:5173/). You should wait until the Python backend prints that it is `SERVING AT 50051` before loading the frontend.
-
-This is much slower and more brittle, especially on Mac (and especially on [Silicon processors](https://github.com/pytorch/serve/issues/2273)), since PyTorch must run in a single thread.
-
-#### Run Docker setup with custom models
-
-To specify a custom model with the full Docker setup, prepend `MODEL=<hugginface model name>` to the command, e.g.
-
-```sh
-MODEL=roneneldan/TinyStories-1Layer-21M docker compose --profile python up
-```
-
-## Development
-
-To recompile protocol buffers, run
-
-```sh
-docker compose run --rm protoc
-```
-
-To rebuild single-file web app, run
-
-```sh
-docker compose run --rm frontend-singlefile-build
-```
+See [the standalone documentation](./standalone.md).
 
 ## TODO
 
@@ -147,7 +130,7 @@ docker compose run --rm frontend-singlefile-build
 - [x] Fully functioning Docker stack
 - [x] Python package
 - [x] Jupyter/IPython notebook support
-- [ ] API for adding hooks/visuals on backend
+- [x] API for adding hooks/visuals on backend
 - [ ] Rethink visualization block design
 - [x] Colab demos
-- [ ] Support non-text generating models
+- [x] Support non-text generating models

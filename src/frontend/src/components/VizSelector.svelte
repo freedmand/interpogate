@@ -61,7 +61,7 @@
 			</RadioItem>
 			<RadioItem bind:group={vizType} name="justify" value="bargraph">
 				<div>
-					<div class="font-mono mb-1">Bar graph</div>
+					<div class="font-mono mb-1">Bar graph<br />(not yet supported)</div>
 					<div class="w-12 h-12 bg-surface-500 relative mx-auto border-4 border-surface-500">
 						<div
 							class="absolute w-1/3 h-2/3 left-0 top-1/3 rounded-t-sm border border-surface-500 bg-surface-300"

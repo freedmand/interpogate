@@ -1,4 +1,4 @@
-import type { Key } from './proto/interpogate';
+import type { ComplexShape, Key } from './proto/interpogate';
 import type { NdArray } from 'ndarray';
 import ndarray from 'ndarray';
 import npyjs from 'npyjs';
@@ -64,6 +64,27 @@ export function keyToString(key: Key): string {
 			return `${key.keyType.listKey}`;
 		case undefined:
 			throw new Error(`Invalid key type: ${key}`);
+	}
+}
+
+export function shapeToString(shape: ComplexShape): string {
+	switch (shape.shapeType.oneofKind) {
+		case 'classShape':
+			return `(${Object.entries(shape.shapeType.classShape.mapShape)
+				.map(([k, v]) => `${k}=${shapeToString(v)}`)
+				.join(',')})`;
+		case 'dictShape':
+			return `{${Object.entries(shape.shapeType.dictShape.mapShape)
+				.map(([k, v]) => `${JSON.stringify(k)}:${shapeToString(v)}`)
+				.join(',')})`;
+		case 'listShape':
+			return `[${shape.shapeType.listShape.listShape.map((v) => shapeToString(v)).join(',')}]`;
+		case 'type':
+			return shape.shapeType.type;
+		case 'shape':
+			return `<${shape.shapeType.shape.shape.map((x) => `${x}`).join('×')}>`;
+		case undefined:
+			throw new Error(`Unexpected undefined shape type: ${shape}`);
 	}
 }
 
