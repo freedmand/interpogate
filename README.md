@@ -2,7 +2,7 @@
 
 A visual tool to interpret and understand PyTorch machine learning models.
 
-https://github.com/freedmand/interpogate/assets/306095/849afa6a-66d4-4009-8a8a-107cfd6345fd
+https://github.com/freedmand/interpogate/assets/306095/afc0a504-90f3-40f4-8d8e-9e302e5d3a89
 
 - Displays a graph of model architecture with a WebGL-powered frontend
 - Visualization can run in IPython/Jupyter notebooks
@@ -10,7 +10,7 @@ https://github.com/freedmand/interpogate/assets/306095/849afa6a-66d4-4009-8a8a-1
 - Tool can be run standalone to visualize model runs in real-time via gRPC streaming (beta)
   - Supports adding visualization blocks
 
-See https://twitter.com/dylfreed/status/1754023172502847973 for more context / demo videos.
+See https://twitter.com/dylfreed/status/1756543423216030107 for more context / demo videos.
 
 ### Demos
 
@@ -52,18 +52,17 @@ from interpogate import Interpogate
 
 # Create an instance of interpogate and run a forward pass
 interp = Interpogate(model, tokenizer)
-interp_text.forward_text("Hello there, how are you?")
+interp.forward_text("Hello there, how are you?")
 
 # Visualize the forward pass
-from IPython.display import HTML
-HTML(interp.get_iframe())
+interp.visualize()
 ```
 
 You can run interpogate on non-textbased models as well:
 
 ```py
 interp = Interpogate(model)
-interp_text.forward(**inputs)
+interp.forward(**inputs)
 ```
 
 Interpogate creates paths for each node that can be explored via the interactive visualization. It also provides a convenient API for registering disposable hooks and modifying model behavior:
