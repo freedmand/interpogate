@@ -69,11 +69,12 @@ Interpogate creates paths for each node that can be explored via the interactive
 
 ```py
 lm_head = interp.node('lm_head')
+norm = interp.node('model.norm')
 with interp.hook() as hook:
     def post_hook(model, input, output):
         # output shape: [<1×N×2048>,...]
         # Run the lm head to unembed and get logits
-        logits = lm_head(output[0])[0]
+        logits = lm_head(norm(output[0]))[0]
         layer_logits.append(logits)
         pass
 
